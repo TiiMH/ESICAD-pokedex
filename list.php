@@ -21,7 +21,7 @@ try {
 
     foreach ($pokemons as $pokemon) {
         echo "<tr>";    
-        echo "<td><a href=FichePokemon.php?id=". $pokemon["IdPokemon"] . "'>" . ($pokemon["NomPokemon"]) . "</a></td>";
+        echo "<td>" . ($pokemon["NomPokemon"]) . "</td>";
         echo "<td><img src='" . ($pokemon['urlPhoto']) . "' alt='" . ($pokemon["NomPokemon"]) . "' width='50' height='50'></td>";
         echo "<td>" . ($pokemon['Type 1']) . "</td>";
         echo "<td>" . ($pokemon["Type 2"]) . "</td>";

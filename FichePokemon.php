@@ -19,7 +19,6 @@ $query->close();
   <h2><?php echo $result['NomPokemon']; ?></h2>
 </a>
 
-<p>Type: <?php echo $result['type']; ?></p>
-<!-- Autres détails du Pokemon -->
-<p>Points de vie: <?php echo $result['hp']; ?></p>
-<!-- Ajoutez d'autres détails selon vos besoins -->
+<p>Type: <?php echo $result['type1']; ?></p>  <!-- Autres détails du Pokemon -->
+
+<p>Points de vie: <?php echo $result['hp']; ?></p>  <!-- Ajoutez d'autres détails selon vos besoins -->
