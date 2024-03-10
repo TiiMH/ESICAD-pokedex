@@ -1,24 +1,51 @@
 <?php
 require_once("head.php");
-require_once("database-connection.php");
+require_once('database-connection.php');
 
-$idPokemon = $_GET['id'];
+$idPokemon = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$idPokemon = max(0, $idPokemon);
 
-$query = $databaseConnection->prepare("SELECT * FROM pokemon WHERE idPokemon = ?");
-$query->bind_param("i", $idPokemon);
-$query->execute();
+$stmt = $databaseConnection->prepare("SELECT P.NomPokemon AS 'Nom', P.IdPokemon AS 'Id', P.urlPhoto AS 'Photo', P.PV AS 'PV', P.Attaque AS 'Attaque', P.Defense AS 'Defense', P.Vitesse AS 'Vitesse', P.Special AS 'Special', E.idEvolution AS 'Evolution', P2.NomPokemon AS 'Nom2', P2.IdPokemon AS 'Id2', P2.urlPhoto AS 'Photo2' 
+    FROM evolutionpokemon E 
+    JOIN pokemon P ON E.IdPokemon = P.idPokemon 
+    LEFT JOIN Pokemon P2 ON E.idEvolution = P2.IdPokemon 
+    WHERE P.IdPokemon = ?");
 
-$result = $query->get_result()->fetch_assoc();
-$query->close();
+$stmt->bind_param("i", $idPokemon);
+$stmt->execute();
 
+$result = $stmt->get_result();
+
+if (!$result) {
+    error_log("Cannot execute query. Cause: " . $stmt->error);
+    throw new RuntimeException("An error occurred while fetching data.");
+} else {
+    $idpokemon = $result->fetch_assoc();
+
+    echo "<h1> Pokemon n° " . htmlspecialchars($idpokemon['Id']) . "</h1>
+        <h3>" . htmlspecialchars($idpokemon['Nom']) . "</h3>
+        <img src='" . htmlspecialchars($idpokemon['Photo']). "' alt='" . htmlspecialchars($idpokemon["Nom"]) . "'>";
+
+    echo "<table>";
+    echo "<tr>
+        <th>PV</th>
+        <th>Attaque</th>
+        <th>Defense</th>
+        <th>Vitesse</th>
+        <th>Special</th>
+    </tr>";
+
+    echo "<tr>
+        <td>" . htmlspecialchars($idpokemon["PV"]) . "</td>
+        <td>" . htmlspecialchars($idpokemon["Attaque"]) . "</td>
+        <td>" . htmlspecialchars($idpokemon["Defense"]) . "</td>
+        <td>" . htmlspecialchars($idpokemon["Vitesse"]) . "</td>
+        <td>" . htmlspecialchars($idpokemon["Special"]) . "</td>
+    </tr>";
+}
+
+echo "</table>";
+$databaseConnection->close();
+
+require_once("footer.php");
 ?>
-
-<h1>Pokemon n° <?php echo var_dump('idPokemon'); ?></h1>
-
-<a href="pokemon-details.php?id=<?php echo $result['idPokemon']; ?>">
-  <h2><?php echo $result['NomPokemon']; ?></h2>
-</a>
-
-<p>Type: <?php echo $result['type1']; ?></p>  <!-- Autres détails du Pokemon -->
-
-<p>Points de vie: <?php echo $result['hp']; ?></p>  <!-- Ajoutez d'autres détails selon vos besoins -->
